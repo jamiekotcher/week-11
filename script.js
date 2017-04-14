@@ -6,7 +6,15 @@ var listArray = [
       "Walden",
       "The Elephant, the Tiger, and the Cell Phone"
     ]
-  }
+  },
+  {
+        name: "Groceries to Buy",
+        items: [
+            "Milk",
+            "Eggs",
+            "Butter"
+        ]
+    }
 ];
 var selectedList = 0;
 var listDiv = document.getElementById("lists");
@@ -14,11 +22,136 @@ var itemDiv = document.getElementById("list-items");
 var addListButton = document.getElementById("add-list-button");
 var addItemButton = document.getElementById("add-item-button");
 
+// ------------------------------------------------------
+// LIST SELECTION
+// ------------------------------------------------------
+// 1. Listen to click
+// 2. Get the list that was clicked on
+// 3. Remove "active" from classList
+// 4. add "active" to selected list
+// 5. update items for selected div
+listDiv.addEventListener("click", function(e) {
+    // console.log(this);
+    var clickedListElement = e.target;
+    console.log(clickedListElement.dataset);
+    selectedList = clickedListElement.dataset.index;
+    console.log("selectedList", selectedList);
+
+    updateLists();
+    updateItemsForSelectedList();
+});
+
+
 // FUNCTIONS TO UPDATE THE HTML PAGE WITH RESPECT TO DATA
+function updateLists() {
+  while (listDiv.hasChildNodes()) {
+    listDiv.removeChild(listDiv.lastChild);
+  }
+
+  listArray.forEach(function(list, i) {
+    // Create an 'a' element
+    var aElement = document.createElement("a");
+    aElement.classList.add("list-group-item");
+    aElement.classList.add("list-group-item-action");
+    aElement.classList.add("list");
+
+    aElement.setAttribute("data-index", i);
+     console.log(list.name);
+
+    var textNode = document.createTextNode(list.name);
+    aElement.appendChild(textNode);
+
+    listDiv.appendChild(aElement);
+  });
+}
+
+function updateItemsForSelectedList() {
+  while (itemDiv.hasChildNodes()) {
+    itemDiv.removeChild(itemDiv.lastChild);
+  }
+
+  var listItemArray = listArray[selectedList].items;
+  listItemArray.forEach(function(item, i) {
+    // HOMEWORK
+    // Populate the list-items div (the right div) wit respective list items
+    // - make a new 'a' element
+    var aElement = document.createElement("a");
+    // - add classes to its classList
+    aElement.classList.add("list-group-item");
+    aElement.classList.add("list-group-item-action");
+    aElement.classList.add("list-group");
+    // - set value of 'data-index' attribute to i
+    aElement.setAttribute("data-index", i);
+        console.log(item);
+
+    // - Create a textNode with item name
+    var textNode = document.createTextNode(item);
+    console.log(textNode);
+    aElement.appendChild(textNode);
+    // - append textNode to the 'a' element
+    // - append 'a' element to the itemDiv
+    itemDiv.appendChild(aElement);
+  });
+}
+
+updateLists();
+updateItemsForSelectedList();
 
 // ADDING TO LIST
+addListButton.addEventListener("click", function(e) {
+  e.preventDefault();
+  var listName = document["add-list-form"]["list-name-input"].value;
+  if (listName.length >= 3) {
+    var newList = {
+        name: listName,
+        items: []
+      };
+
+    document["add-list-form"].reset();
+    closePopups();
+    listArray.push(newList);
+    updateLists();
+  } else {
+    alert("Please enter a valid list name: At least 3 characters");
+  }
+});
 
 // ADDING TO LIST ITEMS
+addItemButton.addEventListener("click", function(e) {
+  e.preventDefault();
+  var itemName = document["add-item-form"]["item-name-input"].value;
+  var currentList = listArray[selectedList];
+  var itemArray = currentList.items;
+
+  // HOMEWORK
+  // - get the input value in a variable
+  // - check if the input value is more than 2 characters
+  // - add it into listItemArray
+  // - update listItem div
+
+
+  if (itemName.length >= 3) {
+     // var newItem = {
+     //   name: itemName
+
+     // };
+
+    document["add-item-form"].reset();
+
+    closePopups();
+    itemArray.push(itemName);
+    updateItemsForSelectedList();
+
+
+    console.log(itemName);
+    console.log(currentList);
+    console.log(itemArray);
+    console.log(currentList);
+  } else {
+    alert("Please enter a valid list name: At least 3 characters!")
+  }
+  
+});
 
 // POP-UP HANDLING CODE
 var buttonsArray = document.querySelectorAll(".popup-button");
